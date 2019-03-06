@@ -95,7 +95,7 @@ double RealSet::getIthElement(int index) const {
 }
 
 /**
- * Sum of sets
+ * Union of sets
  * @param oper
  * @return
  */

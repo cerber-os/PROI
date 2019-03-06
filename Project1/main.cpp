@@ -11,7 +11,7 @@
 
 using namespace std;
 
-enum menuOptions{M_APPEND = 1, M_REMOVE, M_LENGTH, M_PRINT, M_SUM, M_DIFF, M_INTER, M_EQ, M_EXIT};
+enum menuOptions{M_APPEND = 1, M_REMOVE, M_LENGTH, M_PRINT, M_UNION, M_DIFF, M_INTER, M_EQ, M_EXIT};
 
 void printHelp() {
     cout << "############ Usage ##########" << endl;
@@ -19,12 +19,12 @@ void printHelp() {
     cout << "2. Remove element from set" << endl;
     cout << "3. Get number of elements in set" << endl;
     cout << "4. Print set" << endl;
-    cout << "5. Sum of sets" << endl;
+    cout << "5. Union of sets" << endl;
     cout << "6. Sets difference" << endl;
     cout << "7. Sets intersection" << endl;
     cout << "8. Check equality" << endl;
     cout << "9. Exit" << endl;
-    cout << "###########################" << endl;
+    cout << "#############################" << endl;
 }
 
 int getIdx() {
@@ -78,7 +78,7 @@ int main() {
                 opt1 = getIdx();
                 cout << "Set #" << opt1 << ": " << sets[opt1] << endl;
                 break;
-            case M_SUM:
+            case M_UNION:
                 opt1 = getIdx();
                 opt2 = getIdx();
                 sets[opt1] += sets[opt2];
