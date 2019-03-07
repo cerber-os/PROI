@@ -50,14 +50,30 @@ int getValue() {
     return value;
 }
 
+bool askSave() {
+    char ans;
+    cout << "Save result [y/n]? ";
+    cin >> ans;
+    if(!cin) {
+        cerr << "Err: Invalid input! Expected character... Abort" << endl;
+        abort();
+    }
+    if(ans == 'y' || ans == 'Y')
+        return true;
+    else
+        return false;
+}
+
+
 int main() {
     int choice = 0;
     int opt1, opt2;
     RealSet sets[NUMBER_OF_SETS];
 
+    printHelp();
     while(choice != M_EXIT)
     {
-        printHelp();
+        cout << "> ";
         cin >> choice;
         switch(choice) {
             case M_APPEND:
@@ -81,20 +97,35 @@ int main() {
             case M_UNION:
                 opt1 = getIdx();
                 opt2 = getIdx();
-                sets[opt1] += sets[opt2];
-                cout << "Done! Result stored in #" << opt1 << endl;
+                if(askSave()) {
+                    sets[opt1] += sets[opt2];
+                    cout << "Done! Result stored in #" << opt1 << endl;
+                } else {
+                    RealSet res = sets[opt1] + sets[opt2];
+                    cout << "Result: " << res << endl;
+                }
                 break;
             case M_DIFF:
                 opt1 = getIdx();
                 opt2 = getIdx();
-                sets[opt1] -= sets[opt2];
-                cout << "Done! Result stored in #" << opt1 << endl;
+                if(askSave()) {
+                    sets[opt1] -= sets[opt2];
+                    cout << "Done! Result stored in #" << opt1 << endl;
+                } else {
+                    RealSet res = sets[opt1] - sets[opt2];
+                    cout << "Result: " << res << endl;
+                }
                 break;
             case M_INTER:
                 opt1 = getIdx();
                 opt2 = getIdx();
-                sets[opt1] *= sets[opt2];
-                cout << "Done! Result stored in #" << opt1 << endl;
+                if(askSave()) {
+                    sets[opt1] *= sets[opt2];
+                    cout << "Done! Result stored in #" << opt1 << endl;
+                } else {
+                    RealSet res = sets[opt1] * sets[opt2];
+                    cout << "Result: " << res << endl;
+                }
                 break;
             case M_EQ:
                 opt1 = getIdx();

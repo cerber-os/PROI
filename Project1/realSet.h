@@ -24,21 +24,21 @@ public:
     RealSet();
     ~RealSet();
 
-    bool    contains    (double number) const;
-    void    append      (double number);
-    double  remove      (double number);
+    bool    contains        (double number) const;
+    void    append          (double number);
+    double  remove          (double number);
     int     getLength()     const;
     int     getMaxSize()    const;
-    double  getIthElement(int index) const;
+    double  getIthElement   (int index) const;
 
-    RealSet operator+   (const RealSet& oper);
-    void    operator+=  (const RealSet& oper);
-    RealSet operator-   (const RealSet& oper);
-    void    operator-=  (const RealSet& oper);
-    RealSet operator*   (const RealSet& oper);
-    void    operator*=  (const RealSet& oper);
-    bool    operator==  (const RealSet& oper);
-    bool    operator!=  (const RealSet& oper);
+    RealSet operator+       (const RealSet& oper);
+    void    operator+=      (const RealSet& oper);
+    RealSet operator-       (const RealSet& oper);
+    void    operator-=      (const RealSet& oper);
+    RealSet operator*       (const RealSet& oper);
+    void    operator*=      (const RealSet& oper);
+    bool    operator==      (const RealSet& oper);
+    bool    operator!=      (const RealSet& oper);
 };
 
 std::ostream& operator<<(std::ostream& out, const RealSet& oper);

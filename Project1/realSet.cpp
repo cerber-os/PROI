@@ -127,9 +127,6 @@ RealSet RealSet::operator-(const RealSet& oper) {
     for(int i = 0; i < getLength(); i++)
         if(!oper.contains( getIthElement(i) ))
             newSet.append(getIthElement(i));
-    for(int i = 0; i < oper.getLength(); i++)
-        if(!contains( oper.getIthElement(i) ))
-            newSet.append(oper.getIthElement(i));
     return newSet;
 }
 
@@ -138,8 +135,6 @@ void RealSet::operator-=(const RealSet& oper) {
     for(int i = 0; i < oper.getLength(); i++)
         if(contains( oper.getIthElement(i) ))
             remove(oper.getIthElement(i));
-        else
-            append(oper.getIthElement(i));
 }
 
 /**
@@ -200,8 +195,13 @@ int RealSet::getMaxSize() const {
  * @return
  */
 std::ostream& operator<<(std::ostream& out, const RealSet& oper) {
-    for(int i = 0; i < oper.getLength() - 1; i++)
-        out << oper.getIthElement(i) << ", ";
-    out << oper.getIthElement(oper.getLength() - 1); // Don't print comma at the end of output
+    if(oper.getLength() == 0)
+        out << "<empty>";
+    else {
+        for(int i = 0; i < oper.getLength() - 1; i++)
+            out << oper.getIthElement(i) << ", ";
+
+        out << oper.getIthElement(oper.getLength() - 1); // Don't print comma at the end of output
+    }
     return out;
 }
