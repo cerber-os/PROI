@@ -188,6 +188,13 @@ int RealSet::getMaxSize() const {
     return MAX_SIZE;
 }
 
+RealSet RealSet::operator=( const RealSet &oper ) {
+    RealSet set;
+    for(int i = 0; i < oper.length; i++)
+        set.append(oper.getIthElement(i));
+    return set;
+}
+
 /**
  * Inserts text representation of set to stream
  * @param out

@@ -39,6 +39,7 @@ public:
     void    operator*=      (const RealSet& oper);
     bool    operator==      (const RealSet& oper);
     bool    operator!=      (const RealSet& oper);
+    RealSet operator=       (const RealSet& oper);
 };
 
 std::ostream& operator<<(std::ostream& out, const RealSet& oper);
