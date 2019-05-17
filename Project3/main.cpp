@@ -3,41 +3,6 @@
 #include "randomGen.h"
 #include "log.h"
 
-void test1() {
-    try {
-        Logger() << "Running test #1";
-        initializeRandomGen(123);
-        SwimmingPool test1("Test1", false);
-        Instructor instructors[3];
-        Rescuer rescuers[3];
-
-        Place track("Swimming track", test1, 4);
-        Place longSlide("Long slide", test1, 3);
-        Place jacuzzi("Jacuzzi", test1, 0);
-        Place shortSlide("Short slide", test1, 1);
-        Cashdesk cashdesk(test1);
-
-        track.addWorker(instructors[0]);
-        track.addWorker(rescuers[0]);
-        longSlide.addWorker(instructors[1]);
-        longSlide.addWorker(rescuers[1]);
-        jacuzzi.addWorker(instructors[2]);
-        jacuzzi.addWorker(rescuers[2]);
-
-        for(int i = 0; i < 5; i++)
-            test1.simulate();
-    } catch(std::exception& e) {
-        Logger(Logger::CRIT) << e.what();
-        Logger(Logger::CRIT) << "Fatal error occurred... Test failed";
-    } catch(...) {
-        Logger(Logger::CRIT) << "Unknown exception... Test failed";
-    }
-}
-
-void runTests() {
-    test1();
-}
-
 void runSimulation(std::ifstream& fd) {
     std::string swimmingPoolName;
     int withDelays, lengthOfSimulation, numberOfPlaces, numberOfCashdesks, numberOfInstructors, numberOfRescuers, seed;
@@ -52,6 +17,7 @@ void runSimulation(std::ifstream& fd) {
     Cashdesk* cashdesks[numberOfCashdesks];
     Instructor* instructors[numberOfInstructors];
     Rescuer* rescuers[numberOfRescuers];
+    initializeRandomGen(seed);
 
     for(int i = 0; i < numberOfCashdesks; i++)
         cashdesks[i] = new Cashdesk(pool);
@@ -100,11 +66,41 @@ void runSimulation(std::ifstream& fd) {
 
 }
 
+void runTests() {
+    const char* testFiles [] = {"tests/test1.txt",
+                                "tests/test2.txt",
+                                "tests/test3.txt",
+                                "tests/test4.txt",
+                                "tests/test5.txt",
+                                "tests/test6.txt"};
+
+    for(const char* test : testFiles) {
+        Logger() << "Starting test \"" << test << "\"";
+        std::ifstream fd;
+        fd.open(test);
+        if(fd.fail()) {
+            Logger(Logger::CRIT) << "Unable to read \"" << test << "\" ! Exiting...";
+            continue;
+        }
+
+        try {
+            runSimulation(fd);
+            fd.close();
+        } catch(std::exception& ex) {
+            Logger(Logger::CRIT) << "Test \"" << test << "\" failed!";
+            Logger(Logger::CRIT) << ex.what();
+            continue;
+        }
+        Logger() << "Test \"" << test << "\" succeed!";
+    }
+}
+
 int main(int argc, char** argv) {
     Logger().clear();
     if(argc != 2) {
-        Logger(Logger::CRIT) << "Usage: ./" << argv[0] << " configFile";
-        exit(1);
+        Logger() << "Launching program in test mode";
+        runTests();
+        return 0;
     }
 
     std::ifstream fd;
@@ -114,18 +110,12 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
-    std::string mode;
-    fd >> mode;
-    if(mode == "TEST")
-        runTests();
-    else if(mode == "MANUAL") {
-        try { runSimulation(fd);}
-        catch(std::exception& ex) {
-            Logger(Logger::CRIT) << ex.what();
-            exit(1);
-        }
-    } else {
-        Logger(Logger::CRIT) << "Invalid mode specified in config file: \"" << mode << "\"! Exiting...";
+    try {
+        runSimulation(fd);
+    } catch(std::exception& ex) {
+        Logger(Logger::CRIT) << ex.what();
         exit(1);
     }
+    fd.close();
+    return 0;
 }

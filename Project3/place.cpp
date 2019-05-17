@@ -249,7 +249,7 @@ void Cashdesk::serveClient() {
 
         int ticketValidFor = currentTimeTick + genRandomNumber(5, 20);
         client->setTicketTime(ticketValidFor);
-        client->setExperience(genRandomNumber(0, 5));
+        client->setExperience(genRandomNumber(0, 6));
         Logger(currentTimeTick) << client->getName() << " bought a ticket for " << ticketValidFor - currentTimeTick << " cycles in " << getName();
     }
 }

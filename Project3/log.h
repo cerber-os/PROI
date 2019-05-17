@@ -47,8 +47,8 @@ public:
             std::cout << "ERROR: Unable to open log file for writing! Exiting..." << std::endl;
         }
 
-        // Prepare timestamp string - if no provided (-1) insert "---"; otherwise convert to number and add padding
-        std::string time_s = (time == -1 ? "---" : std::to_string(time));
+        // Prepare timestamp string - if no provided (-1) insert "----"; otherwise convert to number and add padding
+        std::string time_s = (time == -1 ? "----" : std::to_string(time));
         if(time_s.length() <= 4)
             time_s.insert(time_s.begin(), 4 - time_s.length(),' ');
 
