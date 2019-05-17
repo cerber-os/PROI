@@ -1,45 +1,32 @@
 /*
  * File: swimmingPool.cpp
- * Author: anybody
+ * Author: Paweł Wieczorek
  * Date: 08 maj 2019
- * Description:
+ * Description: Implementation of class representing swimming pool
  */
 
-#include "swimmingPool.h"
-#include "randomGen.h"
 #include <thread>
 #include <chrono>
+#include "swimmingPool.h"
+#include "randomGen.h"
+
+SwimmingPool::SwimmingPool( std::string name, bool withDelays ) :
+    name(std::move(name)), currentTimeTick(0), withDelays(withDelays) {}
 
 
-SwimmingPool::SwimmingPool( std::string name ) : name(std::move(name)), currentTimeTick(0) {}
-
-
+// Simulate every place
 long SwimmingPool::simulate() {
     for(Place* place : places) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(genRandomNumber(400,450)));
-        place->simulate(currentTimeTick);
-    }
-
-    for(Place* place : specialPlaces) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(genRandomNumber(400,450)));
+        if(withDelays)
+            std::this_thread::sleep_for(std::chrono::milliseconds(genRandomNumber(400,450)));
         place->simulate(currentTimeTick);
     }
 
     return currentTimeTick++;
 }
 
-void SwimmingPool::addPlace(Place& place) {
-    places.push_back(&place);
-}
-
-void SwimmingPool::addSpecialPlace(Place& place) {
-    specialPlaces.push_back(&place);
-}
-
+// Return reference to vector of places
 std::vector<Place*>& SwimmingPool::getPlaces() {
     return places;
 }
 
-std::vector<Place*>& SwimmingPool::getSpecialPlaces() {
-    return specialPlaces;
-}

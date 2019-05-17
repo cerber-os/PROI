@@ -45,7 +45,8 @@ public:
 
         // Prepare timestamp string - if no provided (-1) insert "---"; otherwise convert to number and add padding
         std::string time_s = (time == -1 ? "---" : std::to_string(time));
-        time_s.insert(time_s.begin(), 3 - time_s.length(),' ');
+        if(time_s.length() <= 4)
+            time_s.insert(time_s.begin(), 4 - time_s.length(),' ');
 
         // Write the beginning of line in the form: "[time][S]"; use colors on stdout
         fd << "[" << time_s << "]"

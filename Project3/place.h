@@ -1,8 +1,8 @@
 /*
  * File: place.h
- * Author: anybody
+ * Author: Paweł Wieczorek
  * Date: 08 maj 2019
- * Description:
+ * Description: Implementation of class representing places in swimming pool - header
  */
 
 #ifndef PROJECT3_PLACE_H
@@ -14,15 +14,28 @@
 #include "worker.h"
 #include "swimmingPool.h"
 
+// Required to use SwimmingPool& in constructors
 class SwimmingPool;
+
+/**
+ * Place - class representing places in swimming pool
+ *      fields:     uid - unique id of object
+ *                  name
+ *                  places - reference to vector of places in swimming pool
+ *                  clients - vector of clients in this place
+ *                  workers - vector of workers in this place
+ *                  requiredExp - minimal experience required to be in this place
+ *                  currentTimeTick - current simulation tick
+ *       notes:  place is being added to the swimming pool vector of places in constructor
+ */
 class Place {
     static int highestUid;
+    // Simulated actions
     enum {CALL_INSTRUCTOR, FREE_INSTRUCTOR, LEVEL_UP, MOVE, NEED_HELP};
 protected:
     int uid;
     std::string name;
-    std::vector<Place*> const & places;
-    std::vector<Place*> const & specialPlaces;
+    std::vector<Place*>& places;
     std::vector<Client*> clients;
     std::vector<Worker*> workers;
     int requiredExp;
@@ -30,20 +43,30 @@ protected:
 
 public:
     explicit Place(std::string, SwimmingPool&, int);
+    virtual ~Place();
     virtual void simulate(int);
 
-    virtual void addWorker(Worker&);
-    virtual void addClient(Client&);
-    virtual void removeClient(Client&);
-    virtual int getRequiredExp();
-    virtual std::string getName() const;
-    virtual Instructor& getFreeInstructor();
-    virtual Instructor& getInstructorById(int);
-    virtual Rescuer& getFreeRescuer();
-    virtual Place& getRandomPlace(int maxExp);
-    virtual void moveClientTo(Client&, Place&);
+    virtual void        addWorker                   (Worker&);
+    virtual void        addClient                   (Client&);
+    virtual void        removeClient                (Client&);
+    virtual int         getRequiredExp              ();
+    virtual std::string getName                     () const;
+    virtual Instructor& getFreeInstructor           ();
+    virtual Instructor& getInstructorById           (int);
+    virtual Rescuer&    getFreeRescuer              ();
+    virtual Place&      getRandomPlace              (int maxExp);
+    virtual void        moveClientTo                (Client&, Place&);
+    virtual bool        availableToGo               ();
+    virtual void        attachInstructorToClient    (Client* client);
+    virtual void        detachInstructorFromClient  (Client* client);
+    virtual void        deleteClient                (Client* client, int& i);
 };
 
+/**
+ * Cashdesk - class representing cash desk in swimming pool
+ *      fields:     clientsWaiting - queue of clients waiting to be served
+ *                  clientsReadyToGo - queue of clients already served and ready to enter swimming pool
+ */
 class Cashdesk : public Place {
     std::queue<Client*> clientsWaiting;
     std::queue<Client*> clientsReadyToGo;
@@ -51,10 +74,13 @@ class Cashdesk : public Place {
 
 public:
     explicit Cashdesk(SwimmingPool&);
+    ~Cashdesk();
     void simulate(int) override;
-    void moveClientTo(Client&, Place&) override;
-    void moveClientsWithTicket();
-    void serveClient();
+
+    void                moveClientTo                (Client&, Place&) override;
+    bool                availableToGo               () override;
+    void                moveClientsWithTicket       ();
+    void                serveClient                 ();
 };
 
 #endif //PROJECT3_PLACE_H
