@@ -10,7 +10,7 @@
 #include "swimmingPool.h"
 #include "randomGen.h"
 
-SwimmingPool::SwimmingPool( std::string name, bool withDelays ) :
+SwimmingPool::SwimmingPool(std::string name, bool withDelays) :
     name(std::move(name)), currentTimeTick(0), withDelays(withDelays) {}
 
 

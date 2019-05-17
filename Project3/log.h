@@ -15,6 +15,7 @@
 /**
  * Logger - simple class providing logging on stdout and text file
  *      usage:      Logger(level, time) << message1 << message2 << ...
+ *                  Logger().clear()
  *      examples:   Logger(Logger::ERROR, 10) << "Error occurred";
  *                  Logger() << "This is info message without time specified";
  *      arguments:  level - type of message (DEBUG, INFO, ERROR, CRIT)          | default: INFO
@@ -41,7 +42,10 @@ public:
 
     explicit Logger(levels logLevel, int time = -1) {
         // Open file in appending mode
-        fd.open(outputFileName, std::ios_base::app);
+        try { fd.open(outputFileName, std::ofstream::app); }
+        catch(...) {        // Cannot open file
+            std::cout << "ERROR: Unable to open log file for writing! Exiting..." << std::endl;
+        }
 
         // Prepare timestamp string - if no provided (-1) insert "---"; otherwise convert to number and add padding
         std::string time_s = (time == -1 ? "---" : std::to_string(time));
@@ -71,6 +75,11 @@ public:
         std::cout << msg;
         fd << msg;
         return *this;
+    }
+
+    void clear() {
+        fd.close();
+        fd.open(outputFileName, std::ofstream::trunc);      // Reopen output file in truncate mode to cleat it
     }
 };
 
