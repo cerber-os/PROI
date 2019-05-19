@@ -11,10 +11,11 @@
 
 int Place::highestUid = 0;
 int Cashdesk::highestUid = 0;
+int Track::highestUid = 0;
 
 Place::Place(std::string name, SwimmingPool& pool, int reqExp=0) :
-        name(std::move(name)), requiredExp(reqExp), uid(highestUid++), currentTimeTick(0),
-        places(pool.getPlaces()) {
+        uid(highestUid++), name(std::move(name)), places(pool.getPlaces()), requiredExp(reqExp),
+        currentTimeTick(0) {
     places.push_back(this);
 }
 
@@ -25,22 +26,22 @@ Place::~Place() {
 
 void Place::simulate(int _currentTimeTick) {
     currentTimeTick = _currentTimeTick;             // Copy currentTimeTick to local field, so other methods can use it
-    for(int i = 0; i < clients.size(); i++) {
+    for(size_t i = 0; i < clients.size(); i++) {
         Client* client = clients[i];
 
         if(client->isOutOfTime(currentTimeTick)) {  // Take care of clients without valid ticket - remove them
             Logger(currentTimeTick) << client->getName() << " has decided to go back to home";
-            deleteClient(client, i);
+            deleteClient(*client, i);
             continue;
         }
 
         switch(genRandomNumber(0, 15)) {            // Simulate random action
             case CALL_INSTRUCTOR: {
-                attachInstructorToClient(client);
+                attachInstructorToClient(*client);
                 break;
             }
             case FREE_INSTRUCTOR: {
-                detachInstructorFromClient(client);
+                detachInstructorFromClient(*client);
                 break;
             }
             case LEVEL_UP: {
@@ -55,17 +56,18 @@ void Place::simulate(int _currentTimeTick) {
                 } catch(std::exception& ex) {
                     Logger(Logger::ERROR, currentTimeTick) << "There isn't an adequate place for " << client->getName() << " with experience: " << client->getExperience();
                     Logger(currentTimeTick) << client->getName() << " decided to go home";
-                    deleteClient(client, i);
+                    deleteClient(*client, i);
                 }
                 break;
             }
             case NEED_HELP: {
                 try {
                     Rescuer &rescuer = getFreeRescuer();
-                    Logger(currentTimeTick) << client->getName() << " was drowning, but thankfully rescuer was nearby";
+                    Logger(currentTimeTick) << client->getName() << " was drowning, but thankfully " << rescuer.getName()
+                                            << " was nearby";
                 } catch ( std::exception &e ) {
                     Logger(Logger::ERROR, currentTimeTick) << "No rescuer near " << getName() << " and " << client->getName() << " has just drowned :/";
-                    deleteClient(client, i);
+                    deleteClient(*client, i);
                 }
                 break;
             }
@@ -75,33 +77,33 @@ void Place::simulate(int _currentTimeTick) {
     }
 }
 
-void Place::deleteClient(Client* client, int& i) {
-    removeClient(*client);
+void Place::deleteClient(Client& client, size_t& i) {
+    removeClient(client);
     i--;
-    delete client;
+    delete &client;
 }
 
-void Place::detachInstructorFromClient(Client* client) {
-    if(client->isInstructorAttached()) {
-        int instructorId = client->detachInstructor();
+void Place::detachInstructorFromClient(Client& client) {
+    if(client.isInstructorAttached()) {
+        int instructorId = client.detachInstructor();
         Instructor& instructor = getInstructorById(instructorId);
         instructor.setInstructorAvailability(true);
-        Logger(currentTimeTick) << client->getName() << " has finished learning with " << instructor.getName()
+        Logger(currentTimeTick) << client.getName() << " has finished learning with " << instructor.getName()
                                 << " and leveled up";
-        client->levelUp();
+        client.levelUp();
     }
 }
 
-void Place::attachInstructorToClient(Client* client) {
-    if(!client->isInstructorAttached()) {
+void Place::attachInstructorToClient(Client& client) {
+    if(!client.isInstructorAttached()) {
         try {
             Instructor& instructor = getFreeInstructor();
             instructor.setInstructorAvailability(false);
-            client->attachInstructor(instructor.getId());
-            Logger(currentTimeTick) << client->getName() << " is being learned with help from "
+            client.attachInstructor(instructor.getId());
+            Logger(currentTimeTick) << client.getName() << " is being learned with help from "
                                     << instructor.getName();
         } catch(std::exception& ex) {
-            Logger(Logger::ERROR, currentTimeTick) << client->getName() << ex.what();
+            Logger(Logger::ERROR, currentTimeTick) << client.getName() << ex.what();
         }
     }
 }
@@ -116,7 +118,7 @@ void Place::addClient(Client& client) {
 
 // Removes client from vector of clients without releasing his memory
 void Place::removeClient(Client& target) {
-    for(int i = 0; i < clients.size(); i++) {
+    for(size_t i = 0; i < clients.size(); i++) {
         if(clients[i]->getId() == target.getId()) {
             if(target.isInstructorAttached()) {
                 int instructorId = target.detachInstructor();
@@ -271,4 +273,18 @@ void Cashdesk::moveClientsWithTicket() {
 
 bool Cashdesk::availableToGo() {
     return false;
+}
+
+/**
+ * Track implementation
+ */
+Track::Track(SwimmingPool& pool, int experience=0) : Place("Track", pool, experience) {
+    uid = highestUid++;
+    depth = requiredExp / 2.0 + 1.5;
+}
+
+std::string Track::getName() const {
+    char depthStr[10];
+    snprintf(depthStr, sizeof(depthStr), "%.2f", depth);    // Sadly, to_string doesn't support changing precision of output
+    return name + " #" + std::to_string(uid) + " (" + depthStr + "m)";
 }

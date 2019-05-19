@@ -49,6 +49,7 @@ public:
     virtual void        addWorker                   (Worker&);
     virtual void        addClient                   (Client&);
     virtual void        removeClient                (Client&);
+    virtual void        deleteClient                (Client& client, size_t& i);
     virtual int         getRequiredExp              ();
     virtual std::string getName                     () const;
     virtual Instructor& getFreeInstructor           ();
@@ -57,9 +58,8 @@ public:
     virtual Place&      getRandomPlace              (int maxExp);
     virtual void        moveClientTo                (Client&, Place&);
     virtual bool        availableToGo               ();
-    virtual void        attachInstructorToClient    (Client* client);
-    virtual void        detachInstructorFromClient  (Client* client);
-    virtual void        deleteClient                (Client* client, int& i);
+    virtual void        attachInstructorToClient    (Client& client);
+    virtual void        detachInstructorFromClient  (Client& client);
 };
 
 /**
@@ -81,6 +81,19 @@ public:
     bool                availableToGo               () override;
     void                moveClientsWithTicket       ();
     void                serveClient                 ();
+};
+
+/**
+ * Track - class representing tracks in swimming pool
+ *      fields:     depth - depth of track of value based on required experience
+ */
+class Track : public Place {
+    double depth;
+    static int highestUid;
+
+public:
+    explicit Track(SwimmingPool&, int);
+    std::string         getName                     () const override;
 };
 
 #endif //PROJECT3_PLACE_H

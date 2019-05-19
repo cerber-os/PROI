@@ -27,7 +27,7 @@ class Client {
     static int highestUid;
 
 public:
-    explicit Client(int ticketTime=0, int exp=1) : ticketValidUntil(ticketTime), uid(highestUid++), experience(exp) {};
+    explicit Client(int ticketTime=0, int exp=1) : uid(highestUid++), experience(exp), ticketValidUntil(ticketTime) {};
     void        setTicketTime       (int);
     int         getTicketTime       ();
     void        setExperience       (int);

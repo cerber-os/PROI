@@ -24,7 +24,8 @@ protected:
     std::string name;
 
 public:
-    explicit Worker(std::string name = "Generic") : name(std::move(name)), uid(highestUid++) {};
+    explicit Worker(std::string name = "Generic") : uid(highestUid++), name(std::move(name)) {};
+    virtual ~Worker() = default;
     virtual std::string getName();
     virtual bool isFreeInstructor();
     virtual bool isFreeRescuer();

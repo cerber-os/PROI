@@ -1,3 +1,9 @@
+/*
+ * File: main.cpp
+ * Author: Paweł Wieczorek
+ * Date: 08 maj 2019
+ * Description: Entry point
+ */
 #include <iostream>
 #include "swimmingPool.h"
 #include "randomGen.h"
@@ -30,7 +36,10 @@ void runSimulation(std::ifstream& fd) {
         std::string placeName;
         int exp, noIns, noRes, uid;
         fd >> placeName >> exp >> noIns >> noRes;
-        places[i] = new Place(placeName, pool, exp);
+        if(placeName == "Track" || placeName == "TRACK")
+            places[i] = new Track(pool, exp);
+        else
+            places[i] = new Place(placeName, pool, exp);
         for(int j = 0; j < noIns; j++) {
             fd >> uid;
             // Due to the 48-bit size of address space on x86_64, last 16 bits are always 0
