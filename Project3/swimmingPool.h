@@ -15,13 +15,22 @@
 class Place;
 
 /**
+ * ISwimmingPool - interface of class SwimmingPool
+ */
+class ISwimmingPool {
+public:
+    virtual long                    simulate    ()   = 0;
+    virtual std::vector<Place*>&    getPlaces   ()   = 0;
+};
+
+/**
  * SwimmingPool - class representing swimming pool
  *      fields:     name
  *                  currentTimeTick
  *                  withDelays - should simulation contain delays to slow down output
  *                  places - vector of pointers to available places in swimming pool
  */
-class SwimmingPool {
+class SwimmingPool : ISwimmingPool {
     const std::string name;
     long currentTimeTick;
     bool withDelays;

@@ -11,13 +11,27 @@
 #include <iostream>
 
 /**
+ * IWorker - interface of class Worker
+ */
+class IWorker {
+public:
+    virtual ~IWorker() = default;
+    virtual std::string getName()   = 0;
+    virtual bool isFreeInstructor() = 0;
+    virtual bool isFreeRescuer()    = 0;
+    virtual bool isInstructor()     = 0;
+    virtual bool isRescuer()        = 0;
+    virtual int getId()             = 0;
+};
+
+/**
  * Worker - class representing workers of swimming pool
  *      fields:     uid - unique id of object
  *                  name - name of worker; default: Generic
  *                  highestUid - first available id (starts with 0)
  *      examples:   Worker("Plumber");
  */
-class Worker {
+class Worker : IWorker {
     static int highestUid;
 protected:
     int uid;

@@ -18,6 +18,28 @@
 class SwimmingPool;
 
 /**
+ * IPlace - interface of class Place
+ */
+class IPlace {
+public:
+    virtual             ~IPlace                     ()                          = default;
+    virtual void        simulate                    (int)                       = 0;
+
+    virtual void        addWorker                   (Worker&)                   = 0;
+    virtual void        addClient                   (Client&)                   = 0;
+    virtual void        removeClient                (Client&)                   = 0;
+    virtual void        deleteClient                (Client& client, size_t& i) = 0;
+    virtual int         getRequiredExp              ()                          = 0;
+    virtual std::string getName                     () const                    = 0;
+    virtual Instructor& getFreeInstructor           ()                          = 0;
+    virtual Instructor& getInstructorById           (int)                       = 0;
+    virtual Rescuer&    getFreeRescuer              ()                          = 0;
+    virtual bool        availableToGo               ()                          = 0;
+    virtual void        attachInstructorToClient    (Client& client)            = 0;
+    virtual void        detachInstructorFromClient  (Client& client)            = 0;
+};
+
+/**
  * Place - class representing places in swimming pool
  *      fields:     uid - unique id of object
  *                  name
@@ -28,7 +50,7 @@ class SwimmingPool;
  *                  currentTimeTick - current simulation tick
  *       notes:  place is being added to the swimming pool vector of places in constructor
  */
-class Place {
+class Place : IPlace {
     static int highestUid;
     // Simulated actions
     enum {CALL_INSTRUCTOR, FREE_INSTRUCTOR, LEVEL_UP, MOVE, NEED_HELP};

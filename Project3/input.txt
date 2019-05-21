@@ -1,5 +1,5 @@
 SUPER_AQUAPARK
-1 5
+1 22
 2 1 2 1 123
 Track 4 1 0 0
 Slide 0 1 0 1
